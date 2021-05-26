@@ -22,6 +22,17 @@ var beepbox = (function (exports) {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
     */
+var scale2nd = true;
+var scale3rd = true;
+var scale4th = true;
+var scale5th = false;
+var scale6th = false
+var scale7th = true;
+var scale8th = true;
+var scale9th = true;
+var scale10th = true;
+var scale11th = true;
+var scale12th = true;
     class Config {
     }
     Config.scales = toNameMap([
@@ -42,10 +53,10 @@ var beepbox = (function (exports) {
         { name: "Phrygian", realName: "dunno", flags: [true, true, false, true, false, true, false, true, true, false, true, false] },
         { name: "Dorian", realName: "dunno", flags: [true, false, true, true, false, true, false, true, false, true, true, false] },
         { name: "Jacked Toad", realName: "The scale used in the iconic song, Jacked Toad.", flags: [true, false, true, true, false, true, true, true, true, false, true, true] },
-	{ name: "Dumb", realName: "Originally named, currently named, and will always be named 'dumb.'", flags: [true, false, false, false, false, true, true, true, true, false, false, true] },
+		{ name: "Dumb", realName: "Originally named, currently named, and will always be named 'dumb.'", flags: [true, false, false, false, false, true, true, true, true, false, false, true] },
         { name: "Whole Tone", realName: "The 'whole tone' scale is built entirely of tritones, making for some slightly unpleasant sounds. Only use if you know what you're doing!", flags: [true, false, true, false, true, false, true, false, true, false, true, false] },
         { name: "Rythmic", realName: "Pretty straightforward.", flags: [true, false, false, false, false, false, false, false, false, false, false, false] },
-        { name: "Custom Scale...", realName: "...", flags: [true, false, true, true, false, true, true, true, true, true, true, false] },
+        { name: "Custom Scale...", realName: "...", IsCustom: true, flags: [true, scale2nd, scale3rd, scale4th, scale5th, scale6th, scale7th, scale8th, scale9th, scale10th, scale11th, scale12th] },
     ]);
     Config.keys = toNameMap([
         { name: "C", isWhiteKey: true, basePitch: 12 },
@@ -65,7 +76,7 @@ var beepbox = (function (exports) {
     Config.blackKeyNameParents = [-1, 1, -1, 1, -1, 1, -1, -1, 1, -1, 1, -1];
     Config.tempoMin = -500;
     Config.tempoMax = 500;
-    Config.reverbRange = 4;
+    Config.reverbRange = 8;
     Config.beatsPerBarMin = 1;
     Config.beatsPerBarMax = 32;
     Config.barCountMin = 1;
@@ -89,26 +100,23 @@ var beepbox = (function (exports) {
         { name: "rounded", volume: 0.95, samples: centerWave([0.0, 0.2, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.95, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.95, 0.9, 0.85, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.0, -0.2, -0.4, -0.5, -0.6, -0.7, -0.8, -0.85, -0.9, -0.95, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -0.95, -0.9, -0.85, -0.8, -0.7, -0.6, -0.5, -0.4, -0.2]) },
         { name: "triangle", volume: 1.0, samples: centerWave([1.0 / 15.0, 3.0 / 15.0, 5.0 / 15.0, 7.0 / 15.0, 9.0 / 15.0, 11.0 / 15.0, 13.0 / 15.0, 15.0 / 15.0, 15.0 / 15.0, 13.0 / 15.0, 11.0 / 15.0, 9.0 / 15.0, 7.0 / 15.0, 5.0 / 15.0, 3.0 / 15.0, 1.0 / 15.0, -1.0 / 15.0, -3.0 / 15.0, -5.0 / 15.0, -7.0 / 15.0, -9.0 / 15.0, -11.0 / 15.0, -13.0 / 15.0, -15.0 / 15.0, -15.0 / 15.0, -13.0 / 15.0, -11.0 / 15.0, -9.0 / 15.0, -7.0 / 15.0, -5.0 / 15.0, -3.0 / 15.0, -1.0 / 15.0]) },
         { name: "square", volume: 0.5, samples: centerWave([1.0, -1.0]) },
-        { name: "1/3 pulse", volume: 0.5, samples: centerWave([1.0, -1.0, -1.0]) },
         { name: "1/4 pulse", volume: 0.5, samples: centerWave([1.0, -1.0, -1.0, -1.0]) },
-        { name: "1/5 pulse", volume: 0.5, samples: centerWave([1.0, -1.0, -1.0, -1.0, -1.0]) },
         { name: "1/8 pulse", volume: 0.5, samples: centerWave([1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]) },
         { name: "sawtooth", volume: 0.65, samples: centerWave([1.0 / 31.0, 3.0 / 31.0, 5.0 / 31.0, 7.0 / 31.0, 9.0 / 31.0, 11.0 / 31.0, 13.0 / 31.0, 15.0 / 31.0, 17.0 / 31.0, 19.0 / 31.0, 21.0 / 31.0, 23.0 / 31.0, 25.0 / 31.0, 27.0 / 31.0, 29.0 / 31.0, 31.0 / 31.0, -31.0 / 31.0, -29.0 / 31.0, -27.0 / 31.0, -25.0 / 31.0, -23.0 / 31.0, -21.0 / 31.0, -19.0 / 31.0, -17.0 / 31.0, -15.0 / 31.0, -13.0 / 31.0, -11.0 / 31.0, -9.0 / 31.0, -7.0 / 31.0, -5.0 / 31.0, -3.0 / 31.0, -1.0 / 31.0]) },
         { name: "double saw", volume: 0.5, samples: centerWave([0.0, -0.2, -0.4, -0.6, -0.8, -1.0, 1.0, -0.8, -0.6, -0.4, -0.2, 1.0, 0.8, 0.6, 0.4, 0.2]) },
         { name: "double pulse", volume: 0.4, samples: centerWave([1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, -1.0, -1.0]) },
         { name: "spiky", volume: 0.4, samples: centerWave([1.0, -1.0, 1.0, -1.0, 1.0, 0.0]) },
-	{ name: "glitch", volume: 0.2, samples: centerWave([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0]) },
+	{ name: "glitch", volume: 0.35, samples: centerWave([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0]) },
 	{ name: "pokey square", volume: 0.5, samples: centerAndNormalizeWave([1.0, -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0]) },
         { name: "pokey bass", volume: 0.5, samples: centerAndNormalizeWave([1.0, -1.0, 1.0, -1.0, 1.0]) },
         { name: "modbox viola", volume: 0.45, samples: centerAndNormalizeWave([-0.9, -1.0, -0.85, -0.775, -0.7, -0.6, -0.5, -0.4, -0.325, -0.225, -0.2, -0.125, -0.1, -0.11, -0.125, -0.15, -0.175, -0.18, -0.2, -0.21, -0.22, -0.21, -0.2, -0.175, -0.15, -0.1, -0.5, 0.75, 0.11, 0.175, 0.2, 0.25, 0.26, 0.275, 0.26, 0.25, 0.225, 0.2, 0.19, 0.18, 0.19, 0.2, 0.21, 0.22, 0.23, 0.24, 0.25, 0.26, 0.275, 0.28, 0.29, 0.3, 0.29, 0.28, 0.27, 0.26, 0.25, 0.225, 0.2, 0.175, 0.15, 0.1, 0.075, 0.0, -0.01, -0.025, 0.025, 0.075, 0.2, 0.3, 0.475, 0.6, 0.75, 0.85, 0.85, 1.0, 0.99, 0.95, 0.8, 0.675, 0.475, 0.275, 0.01, -0.15, -0.3, -0.475, -0.5, -0.6, -0.71, -0.81, -0.9, -1.0, -0.9]) },
         { name: "modbox brass", volume: 0.45, samples: centerAndNormalizeWave([-1.0, -0.95, -0.975, -0.9, -0.85, -0.8, -0.775, -0.65, -0.6, -0.5, -0.475, -0.35, -0.275, -0.2, -0.125, -0.05, 0.0, 0.075, 0.125, 0.15, 0.20, 0.21, 0.225, 0.25, 0.225, 0.21, 0.20, 0.19, 0.175, 0.125, 0.10, 0.075, 0.06, 0.05, 0.04, 0.025, 0.04, 0.05, 0.10, 0.15, 0.225, 0.325, 0.425, 0.575, 0.70, 0.85, 0.95, 1.0, 0.9, 0.675, 0.375, 0.2, 0.275, 0.4, 0.5, 0.55, 0.6, 0.625, 0.65, 0.65, 0.65, 0.65, 0.64, 0.6, 0.55, 0.5, 0.4, 0.325, 0.25, 0.15, 0.05, -0.05, -0.15, -0.275, -0.35, -0.45, -0.55, -0.65, -0.7, -0.78, -0.825, -0.9, -0.925, -0.95, -0.975]) },
+        { name: "modbox lyre", volume: 0.45, samples: centerAndNormalizeWave([1.0, -1.0, 4.0, 2.15, 4.13, 5.15, 0.0, -0.05, 1.0]) },  
         { name: "modbox piccolo", volume: 0.5, samples: centerAndNormalizeWave([1, 4, 2, 1, -0.1, -1, -0.12]) },
-        { name: "modbox lyre", volume: 0.45, samples: centerAndNormalizeWave([1.0, -1.0, 4.0, 2.15, 4.13, 5.15, 0.0, -0.05, 1.0]) },
 	{ name: "wackybox guitar string", volume: 0.04, samples: centerWave([0, 63, 63, 63, 63, 19, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 11, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 27, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 34, 63, 63, 63, 63]) },
 	{ name: "wackybox intense", volume: 0.075, samples: centerWave([36, 25, 33, 35, 18, 51, 22, 40, 27, 37, 31, 33, 25, 29, 41, 23, 31, 31, 45, 20, 37, 23, 29, 26, 42, 29, 33, 26, 31, 27, 40, 25, 40, 26, 37, 24, 41, 32, 0, 32, 33, 29, 32, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31, 31]) },
         { name: "wackybox buzz wave", volume: 0.4, samples: centerAndNormalizeWave([0, 1, 1, 2, 4, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 8, 9, 9, 9, 9, 9, 9, 8, 8, 8, 11, 15, 23, 62, 61, 60, 58, 56, 56, 54, 53, 52, 50, 49, 48, 47, 47, 45, 45, 45, 44, 44, 43, 43, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 43, 43, 53]) },
         { name: "todbox slap bass", volume: 0.5, samples: centerAndNormalizeWave([1, 0.5, 0, 0.5, 1.25, 0.5, -0.25, 0.1, -0.1, 0.1, 1.1, 2.1, 3, 3.5, 2.9, 3.3, 2.7, 2.9, 2.3, 2, 1.9, 1.8, 1, 0.7, 0.9, 0.8, 0.4, 0.1, 0.0, 0.2, 0.4, 0.6, 0.5, 0.8]) },
-	{ name: "todbox harsh wave", volume: 0.45, samples: centerAndNormalizeWave([1.0, -1.0, -1.0, -1.0, 0.5, 0.5, 0.5, 0.7, 0.39, 1.3, 0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0]) },
        // The mobox viola and brass needs changes as it sounds different due to the fact that newer Beepbox versions handle their chip waves differently
        // However, most of the buzzing can be fixed by changing the filter settings; https://tinyurl.com/yhwhcegw
     ]);
@@ -121,6 +129,7 @@ var beepbox = (function (exports) {
         { name: "metallic", volume: 1.5, basePitch: 96, pitchFilterMult: 1024.0, isSoft: false, samples: null },
         { name: "cutter", volume: 0.05, basePitch: 96, pitchFilterMult: 1024.0, isSoft: false, samples: null },
 	{ name: "harsh", volume: 0.3, basePitch: 80, pitchFilterMult: 1024.0, isSoft: false, samples: null },
+        { name: "test", volume: 0.25, basePitch: 69, pitchFilterMult: 1024.0, isSoft: false, samples: null },
     ]);
     Config.filterCutoffMaxHz = 8000;
     Config.filterCutoffMinHz = 1;
@@ -161,9 +170,9 @@ var beepbox = (function (exports) {
         { name: "error", spread: 9.5, offset: 0.0, volume: 1.0, sign: 1.3 },
     ]);
     Config.effectsNames = ["none", "reverb", "chorus", "chorus & reverb"];
-    Config.volumeRange = 8;
+    Config.volumeRange = 16;
     Config.volumeLogScale = -0.5;
-    Config.panCenter = 4;
+    Config.panCenter = 8;
     Config.panMax = Config.panCenter * 2;
     Config.chords = toNameMap([
         { name: "harmony", harmonizes: true, customInterval: false, arpeggiates: false, isCustomInterval: false, strumParts: 0 },
@@ -399,6 +408,12 @@ var beepbox = (function (exports) {
                     drumBuffer = newBuffer;
                 }
             }
+            else if (index == 8) {
+                drawNoiseSpectrum(wave, 1, 7, 12, 5, 0);
+                drawNoiseSpectrum(wave, 11, 2, .6578, .6578, 0);
+                inverseRealFourierTransform(wave, Config.chipNoiseLength);
+                scaleElementsByFactor(wave, 1.0 / Math.sqrt(Config.chipNoiseLength));
+            }
             else {
                 throw new Error("Unrecognized drum index: " + index);
             }
@@ -486,7 +501,7 @@ var beepbox = (function (exports) {
             return null;
         }
     }
-    EditorConfig.version = "Pre-Alpha";
+    EditorConfig.version = "Beta";
     EditorConfig.versionDisplayName = "TodBox " + EditorConfig.version;
     EditorConfig.presetCategories = toNameMap([
        { name: "Custom Instruments", presets: toNameMap([
@@ -700,6 +715,10 @@ var beepbox = (function (exports) {
                 { name: "klaxon synth", midiProgram: 125, isNoise: true, midiSubharmonicOctaves: -1, settings: { "type": "noise", "effects": "reverb", "transition": "slide", "chord": "harmony", "filterCutoffHz": 2000, "filterResonance": 86, "filterEnvelope": "steady", "wave": "buzz" } },
                 { name: "theremin", midiProgram: 40, settings: { "type": "harmonics", "effects": "reverb", "transition": "slide", "chord": "harmony", "filterCutoffHz": 4000, "filterResonance": 14, "filterEnvelope": "steady", "interval": "union", "vibrato": "heavy", "harmonics": [100, 71, 57, 43, 29, 29, 14, 14, 14, 14, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
                 { name: "sonar ping", midiProgram: 121, settings: { "type": "spectrum", "effects": "reverb", "transition": "medium fade", "chord": "harmony", "filterCutoffHz": 1414, "filterResonance": 14, "filterEnvelope": "twang 2", "spectrum": [100, 43, 29, 29, 14, 14, 14, 14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] } },
+            ]) },
+            { name: "Ambience Presets", presets: toNameMap([
+                { name: "wind", midiProgram: 97, settings: { "type": "FM", "effects": "reverb", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 200, "filterResonance": 2950, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1→3 2→4", "feedbackType": "1→3 2→4", "feedbackAmplitude": 15, "feedbackEnvelope": "steady", "operators": [{ "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "custom" }, { "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "flare 2" }] } },
+	        { name: "rain (coming soon)", midiProgram: 97, settings: { "type": "FM", "effects": "reverb", "transition": "seamless", "chord": "harmony", "filterCutoffHz": 200, "filterResonance": 2950, "filterEnvelope": "steady", "vibrato": "none", "algorithm": "1→3 2→4", "feedbackType": "1→3 2→4", "feedbackAmplitude": 15, "feedbackEnvelope": "steady", "operators": [{ "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "custom" }, { "frequency": "16×", "amplitude": 15, "envelope": "steady" }, { "frequency": "16×", "amplitude": 0, "envelope": "flare 2" }] } },
             ]) },
     ]);
 
@@ -11976,6 +11995,62 @@ var beepbox = (function (exports) {
             return Math.floor(Math.max(Number(input.min), Math.min(Number(input.max), Number(input.value))));
         }
     }
+	
+    class ScaleSettingsPrompt {
+        constructor(_doc) {
+            this._doc = _doc;
+            this._positionSelect = select$2({ style: "width: 100%;" }, option$2({ value: "end" }, "true"), option$2({ value: "beginning" }, "false"));
+            this._cancelButton = button$3({ class: "cancelButton" });
+            this._okayButton = button$3({ class: "okayButton", style: "width:45%;" }, "Okay");
+            this.container = div$3({ class: "prompt noSelection", style: "width: 250px;" }, h2$3("idk what im doing"), div$3({ style: "display: flex; flex-direction: row; align-items: center; height: 2em; justify-content: flex-end;" }, div$3({ class: "selectContainer", style: "width: 100%;" }, this._positionSelect)), div$3({ style: "display: flex; flex-direction: row-reverse; justify-content: space-between;" }, this._okayButton), this._cancelButton);
+            this._close = () => {
+                this._doc.undo();
+            };
+            this.cleanUp = () => {
+                this._okayButton.removeEventListener("click", this._saveChanges);
+                this._cancelButton.removeEventListener("click", this._close);
+                this.container.removeEventListener("keydown", this._whenKeyPressed);
+            };
+            this._whenKeyPressed = (event) => {
+                if (event.target.tagName != "BUTTON" && event.keyCode == 13) {
+                    this._saveChanges();
+                }
+            };
+            this._saveChanges = () => {
+                window.localStorage.setItem("barCountPosition", this._positionSelect.value);
+                const group = new ChangeGroup();
+                //group.append(new ChangeBarCount(this._doc, SongDurationPrompt._validate(this._barsStepper), this._positionSelect.value == "beginning"));
+                this._doc.prompt = null;
+                this._doc.record(group, true);
+				scale2nd = this._positionSelect.value;
+				//if (this._positionSelect.value == true) {
+				
+				//}
+            };
+            const lastPosition = window.localStorage.getItem("barCountPosition");
+            if (lastPosition != null) {
+                this._positionSelect.value = lastPosition;
+            }
+            this._okayButton.addEventListener("click", this._saveChanges);
+            this._cancelButton.addEventListener("click", this._close);
+            this.container.addEventListener("keydown", this._whenKeyPressed);
+        }
+        static _validateKey(event) {
+            const charCode = (event.which) ? event.which : event.keyCode;
+            if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57)) {
+                event.preventDefault();
+                return true;
+            }
+            return false;
+        }
+        static _validateNumber(event) {
+            const input = event.target;
+            input.value = String(SongDurationPrompt._validate(input));
+        }
+        static _validate(input) {
+            return Math.floor(Math.max(Number(input.min), Math.min(Number(input.max), Number(input.value))));
+        }
+    }
 
     function transfer(source, length) {
         const dest = new ArrayBuffer(length);
@@ -13840,7 +13915,7 @@ var beepbox = (function (exports) {
             this._nextBarButton = button$8({ class: "nextBarButton", style: "width: 40px;", type: "button", title: "Next Bar (right bracket)" });
             this._volumeSlider = input$6({ title: "main volume", style: "width: 5em; flex-grow: 1; margin: 0;", type: "range", min: "0", max: "75", value: "50", step: "1" });
             this._fileMenu = select$5({ style: "width: 100%;" }, option$5({ selected: true, disabled: true, hidden: false }, "File"), option$5({ value: "new" }, "+ New Blank Song"), option$5({ value: "import" }, "↑ Import Song..."), option$5({ value: "export" }, "↓ Export Song..."), option$5({ value: "copyUrl" }, "⎘ Copy Song URL"), option$5({ value: "shareUrl" }, "⤳ Share Song URL"), option$5({ value: "shortenUrl" }, "… Shorten Song URL"), option$5({ value: "viewPlayer" }, "▶ View in Song Player"), option$5({ value: "copyEmbed" }, "⎘ Copy HTML Embed Code"), option$5({ value: "songRecovery" }, "⚠ Recover Recent Song..."));
-            this._editMenu = select$5({ style: "width: 100%;" }, option$5({ selected: true, disabled: true, hidden: false }, "Edit"), option$5({ value: "undo" }, "Undo (Z)"), option$5({ value: "redo" }, "Redo (Y)"), option$5({ value: "copy" }, "Copy Pattern (C)"), option$5({ value: "pasteNotes" }, "Paste Pattern Notes (V)"), option$5({ value: "pasteNumbers" }, "Paste Pattern Numbers (⇧V)"), option$5({ value: "insertBars" }, "Insert Bar After Selection (⏎)"), option$5({ value: "deleteBars" }, "Delete Selected Bar (⌫)"), option$5({ value: "selectAll" }, "Select All (A)"), option$5({ value: "selectChannel" }, "Select Channel (⇧A)"), option$5({ value: "duplicatePatterns" }, "Duplicate Reused Patterns (D)"), option$5({ value: "transposeUp" }, "Move Notes Up (+)"), option$5({ value: "transposeDown" }, "Move Notes Down (-)"), option$5({ value: "moveNotesSideways" }, "Move All Notes Sideways..."), option$5({ value: "beatsPerBar" }, "Change Beats Per Bar..."), option$5({ value: "barCount" }, "Change Song Length..."), option$5({ value: "channelSettings" }, "Channel Settings..."));
+            this._editMenu = select$5({ style: "width: 100%;" }, option$5({ selected: true, disabled: true, hidden: false }, "Edit"), option$5({ value: "undo" }, "Undo (Z)"), option$5({ value: "redo" }, "Redo (Y)"), option$5({ value: "copy" }, "Copy Pattern (C)"), option$5({ value: "pasteNotes" }, "Paste Pattern Notes (V)"), option$5({ value: "pasteNumbers" }, "Paste Pattern Numbers (⇧V)"), option$5({ value: "insertBars" }, "Insert Bar After Selection (⏎)"), option$5({ value: "deleteBars" }, "Delete Selected Bar (⌫)"), option$5({ value: "selectAll" }, "Select All (A)"), option$5({ value: "selectChannel" }, "Select Channel (⇧A)"), option$5({ value: "duplicatePatterns" }, "Duplicate Reused Patterns (D)"), option$5({ value: "transposeUp" }, "Move Notes Up (+)"), option$5({ value: "transposeDown" }, "Move Notes Down (-)"), option$5({ value: "moveNotesSideways" }, "Move All Notes Sideways..."), option$5({ value: "beatsPerBar" }, "Change Beats Per Bar..."), option$5({ value: "barCount" }, "Change Song Length..."), option$5({ value: "channelSettings" }, "Channel Settings..."), option$5({ value: "setcustomvalue" }, "Set Custom Scale"));
             this._optionsMenu = select$5({ style: "width: 100%;" }, option$5({ selected: true, disabled: true, hidden: false }, "Preferences"), option$5({ value: "autoPlay" }, "Auto Play On Load"), option$5({ value: "autoFollow" }, "Auto Follow Track"), option$5({ value: "enableNotePreview" }, "Preview Added Notes"), option$5({ value: "showLetters" }, "Show Piano Keys"), option$5({ value: "showFifth" }, 'Highlight "Fifth" Notes'), option$5({ value: "showChannels" }, "Show All Channels"), option$5({ value: "showScrollBar" }, "Octave Scroll Bar"), option$5({ value: "alwaysShowSettings" }, "Customize All Instruments"), option$5({ value: "enableChannelMuting" }, "Enable Channel Muting"), option$5({ value: "displayBrowserUrl" }, "Display Song Data in URL"), option$5({ value: "fullScreen" }, "Full-Screen Layout"), option$5({ value: "colorTheme" }, "Dark Mode"));
             this._scaleSelect = buildOptions(select$5(), Config.scales.map(scale => scale.name));
             this._keySelect = buildOptions(select$5(), Config.keys.map(key => key.name).reverse());
@@ -14584,6 +14659,9 @@ var beepbox = (function (exports) {
                     case "channelSettings":
                         this._openPrompt("channelSettings");
                         break;
+					case "setcustomvalue":
+                        this._openPrompt("scalesettings");
+                        break;
                 }
                 this._editMenu.selectedIndex = 0;
             };
@@ -14766,6 +14844,9 @@ var beepbox = (function (exports) {
                         break;
                     case "channelSettings":
                         this.prompt = new ChannelSettingsPrompt(this._doc);
+                        break;
+					case "scalesettings":
+                        this.prompt = new ScaleSettingsPrompt(this._doc);
                         break;
                     default:
                         this.prompt = new TipPrompt(this._doc, promptName);
@@ -15768,6 +15849,7 @@ var beepbox = (function (exports) {
     Object.defineProperty(exports, '__esModule', { value: true });
 
     return exports;
+
 
 }({}));
 //# sourceMappingURL=beepbox_editor.js.map
